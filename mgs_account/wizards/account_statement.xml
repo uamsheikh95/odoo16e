@@ -9,7 +9,7 @@
              <group>
                <group>
                  <field name="date_from" string = "From Date" required="1" />
-                 <field name="account_id" string = "Account" options="{'no_create': True}" />
+                 <field name="account_id" widget="many2many_tags" string = "Account" options="{'no_create': True}" />
                  <field name="company_id" groups="base.group_multi_company" />
                  <field name="target_moves" widget="radio" />
                </group>

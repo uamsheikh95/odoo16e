@@ -10,7 +10,7 @@ class AccountStatement(models.TransientModel):
     _name = 'mgs_account.account_statement'
     _description = 'Account Statement Wizard'
 
-    account_id = fields.Many2one('account.account', string="Account")
+    account_id = fields.Many2many('account.account', string="Accounts")
     partner_id = fields.Many2many('res.partner', string="Partner")
     analytic_account_id = fields.Many2one(
         'account.analytic.account', 'Analytic Account')
@@ -35,7 +35,7 @@ class AccountStatement(models.TransientModel):
             'form': {
                 'company_id': [self.company_id.id, self.company_id.name],
                 'partner_id': [self.partner_id.id, self.partner_id.name],
-                'account_id': [self.account_id.id, self.account_id.name],
+                'account_id': self.account_id.ids,
                 'analytic_account_id': [self.analytic_account_id.id, self.analytic_account_id.name],
                 'date_from': self.date_from,
                 'date_to': self.date_to,
@@ -122,7 +122,7 @@ class AccountStatement(models.TransientModel):
             worksheet.write(row, column+2, 'Date', cell_text_format)
             worksheet.write(row, column+3, 'JV#', cell_text_format)
             worksheet.write(row, column+4, 'Partner', cell_text_format)
-            worksheet.write(row, column+5, 'Label', cell_text_format)
+            worksheet.write(row, column+5, 'Label', cell_number_format)
             worksheet.write(row, column+6, 'Debit', align_right_total)
             worksheet.write(row, column+7, 'Credit', align_right_total)
             worksheet.write(row, column+8, 'Balance', align_right_total)
@@ -139,7 +139,7 @@ class AccountStatement(models.TransientModel):
         total_debit_all = 0
         total_credit_all = 0
 
-        for account in lines(self.company_id.id, self.date_from, self.date_to, self.account_id.id, self.partner_id.id, self.analytic_account_id.id, self.target_moves, 'yes'):
+        for account in lines(self.company_id.id, self.date_from, self.date_to, self.account_id.ids, self.partner_id.id, self.analytic_account_id.id, self.target_moves, 'yes'):
             # Inital Balance
             initial_balance = 0 if not self.date_from else sum_open_balance(
                 self.company_id.id, self.date_from, account['account_id'], self.analytic_account_id.id, self.partner_id.id, self.target_moves)
@@ -151,13 +151,13 @@ class AccountStatement(models.TransientModel):
                 column = -1
                 worksheet.write(row, column+1, account['group'])
                 worksheet.write(
-                    row, column+2, int(initial_balance), align_right)
+                    row, column+2, "{:,}".format(initial_balance), align_right)
                 worksheet.write(
-                    row, column+3, int(account['total_debit']), align_right)
+                    row, column+3, "{:,}".format(account['total_debit']), align_right)
                 worksheet.write(
-                    row, column+4, int(account['total_credit']), align_right)
+                    row, column+4, "{:,}".format(account['total_credit']), align_right)
                 worksheet.write(
-                    row, column+5, int(total_balance), align_right)
+                    row, column+5, "{:,}".format(total_balance), align_right)
 
                 total_debit_all += account['total_debit']
                 total_credit_all += account['total_credit']
@@ -167,8 +167,12 @@ class AccountStatement(models.TransientModel):
                 column = -1
                 worksheet.write(
                     row, column+1, account['group'], cell_text_format)
-                worksheet.write(
-                    row, column+8, int(initial_balance), align_right_total)
+                if self.env.user.has_group('analytic.group_analytic_accounting'):
+                    worksheet.write(
+                        row, column+9, "{:,}".format(initial_balance), align_right_total)
+                elif not self.env.user.has_group('analytic.group_analytic_accounting'):
+                    worksheet.write(
+                        row, column+8, "{:,}".format(initial_balance), align_right_total)
 
                 # ------------------------------ Lines ------------------------------
                 for line in lines(self.company_id.id, self.date_from, self.date_to, account['account_id'], self.partner_id.id, self.analytic_account_id.id, self.target_moves, 'no'):
@@ -181,12 +185,23 @@ class AccountStatement(models.TransientModel):
                     worksheet.write(row, column+4, line['partner_name'])
                     worksheet.write(row, column+5, line['label'])
                     worksheet.write(
-                        row, column+6, int(line['debit']), align_right)
+                        row, column+6, "{:,}".format(line['debit']), align_right)
                     worksheet.write(
-                        row, column+7, int(line['credit']), align_right)
+                        row, column+7, "{:,}".format(line['credit']), align_right)
                     balance += line['debit'] - line['credit']
                     worksheet.write(
-                        row, column+8, int(balance), align_right)
+                        row, column+8, "{:,}".format(balance), align_right)
+
+                    if self.env.user.has_group('analytic.group_analytic_accounting'):
+                        worksheet.write(
+                            row, column+5, line['analytic_account_name'])
+                        worksheet.write(row, column+6, line['label'])
+                        worksheet.write(
+                            row, column+7, "{:,}".format(line['debit']), align_right)
+                        worksheet.write(
+                            row, column+8, "{:,}".format(line['credit']), align_right)
+                        worksheet.write(
+                            row, column+9, "{:,}".format(balance), align_right)
 
                     # ---------------------------------------- END LINES ----------------------------------------
 
@@ -194,22 +209,40 @@ class AccountStatement(models.TransientModel):
                 column = -1
                 worksheet.write(row, column+1, 'TOTAL ' +
                                 account['group'], cell_text_format)
-                worksheet.write(
-                    row, column+6, int(account['total_debit']), align_right_total)
-                worksheet.write(
-                    row, column+7, int(account['total_credit']), align_right_total)
-                worksheet.write(
-                    row, column+8, int(total_balance), align_right_total)
+                if self.env.user.has_group('analytic.group_analytic_accounting'):
+                    worksheet.write(
+                        row, column+7, "{:,}".format(account['total_debit']), align_right_total)
+                    worksheet.write(
+                        row, column+8, "{:,}".format(account['total_credit']), align_right_total)
+                    worksheet.write(
+                        row, column+9, "{:,}".format(total_balance), align_right_total)
+                else:
+                    worksheet.write(
+                        row, column+6, "{:,}".format(account['total_debit']), align_right_total)
+                    worksheet.write(
+                        row, column+7, "{:,}".format(account['total_credit']), align_right_total)
+                    worksheet.write(
+                        row, column+8, "{:,}".format(total_balance), align_right_total)
+                total_debit_all += account['total_debit']
+                total_credit_all += account['total_credit']
 
         row += 1
         column = -1
         worksheet.write(row, column+1, '')
-        worksheet.write(
-            row, column+7, int(total_debit_all), align_right_total)
-        worksheet.write(
-            row, column+8, int(total_credit_all), align_right_total)
-        worksheet.write(
-            row, column+9, int(total_debit_all-total_credit_all), align_right_total)
+        if self.env.user.has_group('analytic.group_analytic_accounting'):
+            worksheet.write(
+                row, column+7, "{:,}".format(total_debit_all), align_right_total)
+            worksheet.write(
+                row, column+8, "{:,}".format(total_credit_all), align_right_total)
+            worksheet.write(
+                row, column+9, "{:,}".format(total_debit_all-total_credit_all), align_right_total)
+        else:
+            worksheet.write(
+                row, column+6, "{:,}".format(total_debit_all), align_right_total)
+            worksheet.write(
+                row, column+7, "{:,}".format(total_credit_all), align_right_total)
+            worksheet.write(
+                row, column+8, "{:,}".format(total_debit_all-total_credit_all), align_right_total)
 
         workbook.close()
         out = base64.encodebytes(fp.getvalue())
@@ -248,7 +281,8 @@ class AccountStatementReport(models.AbstractModel):
             select_query = """
             select aml.id, aml.date as date, aml.move_id as move_id, aj.name as voucher_type,
             rp.name as partner_name, aml.name as label, aml.ref as ref, am.name as voucher_no,
-            aml.partner_id, aml.account_id, aml.debit as debit, aml.credit as credit, am.ref as move_ref
+            aml.partner_id, aml.account_id, aml.debit as debit, aml.credit as credit,
+            aaa.name as analytic_account_name, am.ref as move_ref
             """
 
             order_query = """
@@ -261,6 +295,7 @@ class AccountStatementReport(models.AbstractModel):
         left join res_partner as rp on aml.partner_id=rp.id
         left join account_move as am on aml.move_id=am.id
         left join account_journal as aj on aml.journal_id=aj.id
+        left join account_analytic_account as aaa on aml.analytic_account_id=aaa.id
         where am.state in """ + states
 
         if date_from:
@@ -271,14 +306,16 @@ class AccountStatementReport(models.AbstractModel):
             params.append(date_to)
             from_where_query += """ and aml.date <= %s"""
 
-        if account_id:
+        if is_it_group == 'yes' and len(account_id) > 0:
+            from_where_query += """ and aml.account_id in ( """ + ','.join(
+                map(str, account_id)) + """)"""
+
+        if is_it_group == 'no' and account_id:
             from_where_query += """ and aml.account_id = """ + str(account_id)
 
         if analytic_account_id:
-            # from_where_query += """ and aaa.id = """ + \
-            #     str(analytic_account_id)
-            from_where_query += ' and aml.analytic_distribution @> \'{"%s": 100}\'::jsonb' % str(
-                analytic_account_id)
+            from_where_query += """ and aml.analytic_account_id = """ + \
+                str(analytic_account_id)
 
         if partner_id:
             from_where_query += """ and aml.partner_id = """ + str(partner_id)
@@ -305,15 +342,9 @@ class AccountStatementReport(models.AbstractModel):
             where aml.account_id = %s and aml.date < %s and am.state in """ + states + """
             and aml.company_id = %s"""
 
-        # if analytic_account_id:
-        #     query += """ and aml.analytic_account_id = """ + \
-        #         str(analytic_account_id)
-
         if analytic_account_id:
-            # from_where_query += """ and aaa.id = """ + \
-            #     str(analytic_account_id)
-            query += ' and aml.analytic_distribution @> \'{"%s": 100}\'::jsonb' % str(
-                analytic_account_id)
+            query += """ and aml.analytic_account_id = """ + \
+                str(analytic_account_id)
 
         if partner_id:
             query += """ and aml.partner_id = """ + str(partner_id)
