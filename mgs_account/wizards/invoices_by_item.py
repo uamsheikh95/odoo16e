@@ -148,18 +148,19 @@ class InvoicesbyItem(models.TransientModel):
                 if self.report_by == 'Summary':
                     row += 1
                     column = -1
-                    worksheet.write(row, column+1, product['product_name'])
                     worksheet.write(
-                        row, column+2, "{:,}".format(partner['total_qty']), align_right)
+                        row, column+1, product['product_name']['en_US'])
                     worksheet.write(
-                        row, column+3, "{:,}".format(partner['total_amount']), align_right)
+                        row, column+2, "{:,}".format(product['total_qty']), align_right)
+                    worksheet.write(
+                        row, column+3, "{:,}".format(product['total_amount']), align_right)
 
                 if self.report_by == 'Detail':
                     row += 2
                     column = -1
                     row_number = 'A%s:C%s' % (row, row)
                     worksheet.merge_range(
-                        row_number, product['product_name'], cell_text_format)
+                        row_number, product['product_name']['en_US'], cell_text_format)
 
                     # ------------------------------ Lines ------------------------------
                     for line in lines(self.date_from, self.date_to, self.company_id.id, product['product_id'], self.parent_categ_id.id, self.categ_id.id, 'no', self.invoices_bills):
@@ -183,7 +184,7 @@ class InvoicesbyItem(models.TransientModel):
                     row += 2
                     column = -1
                     worksheet.write(row, column+1, 'TOTAL ' +
-                                    product['product_name'], cell_text_format)
+                                    product['product_name']['en_US'], cell_text_format)
                     worksheet.write(row, column+2, '')
                     worksheet.write(row, column+3, '')
                     worksheet.write(row, column+4, '')
