@@ -159,8 +159,8 @@ class AccountStatement(models.TransientModel):
                 worksheet.write(
                     row, column+5, int(total_balance), align_right)
 
-                total_debit_all += account['total_debit']
-                total_credit_all += account['total_credit']
+            total_debit_all += account['total_debit']
+            total_credit_all += account['total_credit']
 
             if self.report_by == 'detail':
                 row += 2
