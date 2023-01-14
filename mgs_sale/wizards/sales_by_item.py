@@ -10,6 +10,9 @@ class SalesbyItemDetail(models.TransientModel):
     _description = 'Sales by Item'
 
     product_id = fields.Many2one('product.product', string="Product")
+    parent_categ_id = fields.Many2one(
+        'product.category', string="Product Parent Category")
+    categ_id = fields.Many2one('product.category', string="Product Category")
     date_from = fields.Date(
         'From', default=lambda self: fields.Date.today().replace(day=1))
     date_to = fields.Date('To', default=lambda self: fields.Date.today())
@@ -32,6 +35,8 @@ class SalesbyItemDetail(models.TransientModel):
             'model': self._name,
             'form': {
                 'product_id': [self.product_id.id, self.product_id.name],
+                'parent_categ_id': [self.parent_categ_id.id, self.parent_categ_id.name],
+                'categ_id': [self.categ_id.id, self.categ_id.name],
                 'user_id': [self.user_id.id, self.user_id.name],
                 'date_from': self.date_from,
                 'date_to': self.date_to,
@@ -84,29 +89,43 @@ class SalesbyItemDetail(models.TransientModel):
         column = -1
         if self.date_from:
             row += 1
+            column = -1
             worksheet.write(row, column+1, 'From Date', cell_text_format)
             worksheet.write(row, column+2, self.date_from or '',
                             date_heading_format)
-        column+2
 
         if self.date_to:
             row += 1
+            column = -1
             worksheet.write(row, column+1, 'To Date', cell_text_format)
             worksheet.write(row, column+2, self.date_to or '',
                             date_heading_format)
-        column+2
 
         if self.product_id:
             row += 1
+            column = -1
             worksheet.write(row, column+1, 'Product', cell_text_format)
             worksheet.write(row, column+2, self.product_id.name or '')
-        column+2
+
+        if self.parent_categ_id:
+            row += 1
+            column = -1
+            worksheet.write(
+                row, column+1, 'Product Parent Category', cell_text_format)
+            worksheet.write(row, column+2, self.parent_categ_id.name or '')
+
+        if self.categ_id:
+            row += 1
+            column = -1
+            worksheet.write(row, column+1, 'Product Category',
+                            cell_text_format)
+            worksheet.write(row, column+2, self.categ_id.name or '')
 
         if self.user_id:
             row += 1
+            column = -1
             worksheet.write(row, column+1, 'Salesperson', cell_text_format)
             worksheet.write(row, column+2, self.user_id.name or '')
-        column+2
 
         # Sub headers
         row += 2
@@ -125,7 +144,7 @@ class SalesbyItemDetail(models.TransientModel):
         if self.report_by == 'Detail':
             worksheet.write(row, column+2, 'Date', cell_text_format)
             worksheet.write(row, column+3, 'Order', cell_text_format)
-            worksheet.write(row, column+4, 'Item', cell_text_format)
+            worksheet.write(row, column+4, 'Partner', cell_text_format)
 
             worksheet.write(row, column+5, 'Ordered Qty', cell_number_format)
             worksheet.write(row, column+6, 'Delivered Qty', cell_number_format)
@@ -140,10 +159,10 @@ class SalesbyItemDetail(models.TransientModel):
                                 cell_number_format)
 
         # Lines
-        for main in lines(self.date_from, self.date_to, self.company_id.id, self.product_id.id, self.user_id.id, 'all'):
+        for main in lines(self.date_from, self.date_to, self.company_id.id, self.product_id.id, self.parent_categ_id.id, self.categ_id.id, self.user_id.id, 'all'):
             # ------------------------------ Item ------------------------------
 
-            for product in lines(self.date_from, self.date_to, self.company_id.id, self.product_id.id, self.user_id.id, 'yes'):
+            for product in lines(self.date_from, self.date_to, self.company_id.id, self.product_id.id, self.parent_categ_id.id, self.categ_id.id, self.user_id.id, 'yes'):
 
                 if self.report_by == 'Summary':
                     row += 1
@@ -172,7 +191,7 @@ class SalesbyItemDetail(models.TransientModel):
                         row_number, product['product_name']['en_US'], cell_text_format)
 
                     # ------------------------------ Lines ------------------------------
-                    for line in lines(self.date_from, self.date_to, self.company_id.id, product['product_id'], self.user_id.id, 'no'):
+                    for line in lines(self.date_from, self.date_to, self.company_id.id, product['product_id'], self.parent_categ_id.id, self.categ_id.id,  self.user_id.id, 'no'):
                         row += 1
                         column = -1
 
@@ -283,7 +302,7 @@ class SalesbyItemDetailReport(models.AbstractModel):
     _description = 'Sales by Item Report'
 
     @api.model
-    def _lines(self, date_from, date_to, company_id, product_id, user_id, is_group):  # , company_branch_ids
+    def _lines(self, date_from, date_to, company_id, product_id, parent_categ_id, categ_id, user_id, is_group):  # , company_branch_ids
         full_move = []
         params = []
 
@@ -312,8 +331,8 @@ class SalesbyItemDetailReport(models.AbstractModel):
         if is_group == 'no':
             select = """
             select sr.date, sr.name as order_no, rp.name as partner,
-            COALESCE(sr.product_uom_qty, 0) as product_uom_qty, COALESCE(sr.qty_delivered, 0) as qty_delivered, COALESCE(sr.qty_invoiced, 0) as qty_invoiced, COALESCE(sr.qty_to_invoice, 0) as qty_to_invoice, COALESCE(sr.price_total, 0) as price_total,
-            sr.state, COALESCE(sr.price_total-sr.margin, 0) as cost, COALESCE(sr.margin, 0) as margin
+            sr.product_uom_qty, sr.qty_delivered, sr.qty_invoiced, sr.qty_to_invoice,
+            sr.price_total, sr.state, sr.price_total-sr.margin as cost, sr.margin
             """
 
             order = """
@@ -324,6 +343,8 @@ class SalesbyItemDetailReport(models.AbstractModel):
         left join res_partner as rp on sr.partner_id=rp.id
         left join product_product as pp on sr.product_id=pp.id
         left join product_template as pt on pp.product_tmpl_id=pt.id
+        left join product_category as pc on pt.categ_id = pc.id
+        left join product_category as pc2 on pc.parent_id = pc2.id
         where sr.state in ('sale', 'done', 'paid', 'pos_done', 'invoiced')
         """
 
@@ -337,6 +358,12 @@ class SalesbyItemDetailReport(models.AbstractModel):
 
         if product_id:
             from_where += """ and sr.product_id = """ + str(product_id)
+
+        if parent_categ_id:
+            from_where += """ and pc2.id = """ + str(parent_categ_id)
+
+        if categ_id:
+            from_where += """ and pc.id = """ + str(categ_id)
 
         if user_id:
             from_where += """ and sr.user_id = """ + str(user_id)
@@ -363,6 +390,8 @@ class SalesbyItemDetailReport(models.AbstractModel):
             'date_from': data['form']['date_from'],
             'date_to': data['form']['date_to'],
             'product_id': data['form']['product_id'],
+            'parent_categ_id': data['form']['parent_categ_id'],
+            'categ_id': data['form']['categ_id'],
             'user_id': data['form']['user_id'],
             'company_id': self.env['res.company'].search([('id', '=', data['form']['company_id'][0])]),
             'report_by': data['form']['report_by'],
