@@ -14,7 +14,7 @@
                 <t t-foreach="docs" t-as="doc">
                     <t t-call="web.internal_layout" t-lang="en_US">
                         <div class="page">
-                             <style>
+                            <style>
                                 th,td {
                                     padding: 0.30rem;
                                     border-top: 1px solid #212529;
@@ -62,16 +62,14 @@
                                 </thead>
 
                                 <tbody>
-                                    <t t-set="total_debit_all" t-value="0"/>
-                                    <t t-set="total_credit_all" t-value="0"/>
                                     <t t-foreach="lines(company_id.id, date_from, date_to, account_id, partner_id[0], analytic_account_id[0], target_moves, 'yes')" t-as="account">
                                         <t t-set="open_balance" t-value="0"/>
                                         <t t-if="date_from" t-set="open_balance" t-value="sum_open_balance(company_id.id, date_from, account['account_id'], analytic_account_id[0], partner_id[0], target_moves)"/>
                                         <t t-set="balance" t-value="open_balance"/>
 
                                         <tr t-if="report_by == 'detail'" style="color: red; font-weight: bold;">
-                                            <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529;" colspan="7"><span t-esc="account['group']"/></td>
-                                            <td class="text-right" style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529;"><span t-if="date_from" t-esc="'{0:,.2f}'.format(balance)"/></td>
+                                            <td colspan="7"><span t-esc="account['group']"/></td>
+                                            <td style="text-align: right"><span t-if="date_from" t-esc="'{0:,.2f}'.format(balance)"/></td>
                                         </tr>
 
 
@@ -95,53 +93,36 @@
                                             <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529" colspan="6">
                                                 <span style="color: red; font-weight: bold;" t-if="report_by == 'detail'">BALANCE ON DATE</span>
                                             </td>
-                                            <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529" class="text-right">
+                                            <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529" style="text-align: right">
 
                                             </td>
-                                            <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529" class="text-right">
+                                            <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529" style="text-align: right">
 
                                             </td>
-                                            <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529" class="text-right">
+                                            <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529" style="text-align: right">
                                                 <span style="color: red; font-weight: bold;" t-esc="'{0:,.2f}'.format(balance-open_balance)"/>
                                             </td>
                                         </tr> -->
 
                                         <tr style="font-weight: bold">
-                                            <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529" colspan="7">
+                                            <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529" colspan="5">
                                                 <span style="color: red; font-weight: bold;" t-if="report_by == 'detail'">TOTAL <span t-esc="account['group']" /></span>
                                             </td>
-                                            <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529" class="text-right">
+                                            <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529;text-align: right">
                                                 <span style="color: red; font-weight: bold;" t-esc="'{0:,.2f}'.format(account['total_debit'])" t-if="report_by == 'detail'"/>
                                                 <span t-esc="'{0:,.2f}'.format(account['total_debit'])" t-if="report_by == 'summary'"/>
                                             </td>
-                                            <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529" class="text-right">
+                                            <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529">
                                                 <span style="color: red; font-weight: bold;" t-esc="'{0:,.2f}'.format(account['total_credit'])" t-if="report_by == 'detail'"/>
                                                 <span t-esc="'{0:,.2f}'.format(account['total_credit'])"  t-if="report_by == 'summary'"/>
                                             </td>
-                                            <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529" class="text-right">
+                                            <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529">
                                                 <span style="color: red; font-weight: bold;" t-esc="'{0:,.2f}'.format(balance)"  t-if="report_by == 'detail'"/>
                                                 <span t-esc="'{0:,.2f}'.format(balance)"  t-if="report_by == 'summary'"/>
                                             </td>
-
-                                            <t t-set="total_debit_all" t-value="total_debit_all+account['total_debit']"/>
-                                            <t t-set="total_credit_all" t-value="total_credit_all+account['total_credit']"/>
                                         </tr>
-                                        <tr t-if="report_by == 'detail'"><td colspan="10" style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529;height: 19px"/></tr>
+                                        <tr t-if="report_by == 'detail'"><td colspan="9" style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529;height: 19px"/></tr>
                                     </t>
-                                    <tr style="font-weight: bold">
-                                        <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529" colspan="7">
-                                            <span style="color: blue; font-weight: bold;" t-if="report_by == 'detail'">TOTAL </span>
-                                        </td>
-                                        <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529" class="text-right">
-                                            <span style="color: blue; font-weight: bold;" t-esc="'{0:,.2f}'.format(total_debit_all)"/>
-                                        </td>
-                                        <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529" class="text-right">
-                                            <span style="color: blue; font-weight: bold;" t-esc="'{0:,.2f}'.format(total_credit_all)"/>
-                                        </td>
-                                        <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529" class="text-right">
-                                            <span style="color: blue; font-weight: bold;" t-esc="'{0:,.2f}'.format(total_debit_all-total_credit_all)"/>
-                                        </td>
-                                    </tr>
                                 </tbody>
                             </table>
 
