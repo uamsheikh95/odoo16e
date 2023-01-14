@@ -10,6 +10,9 @@ class InvoicesbyItem(models.TransientModel):
     _description = 'Invoices by Item'
 
     product_id = fields.Many2one('product.product', string="Product")
+    parent_categ_id = fields.Many2one(
+        'product.category', string="Parent Category")
+    categ_id = fields.Many2one('product.category', string="Sub Category")
     date_from = fields.Date(
         'From', default=lambda self: fields.Date.today().replace(day=1))
     date_to = fields.Date('To', default=lambda self: fields.Date.today())
@@ -33,6 +36,8 @@ class InvoicesbyItem(models.TransientModel):
             'model': self._name,
             'form': {
                 'product_id': [self.product_id.id, self.product_id.name],
+                'parent_categ_id': [self.parent_categ_id.id, self.parent_categ_id.name],
+                'categ_id': [self.categ_id.id, self.categ_id.name],
                 'date_from': self.date_from,
                 'date_to': self.date_to,
                 'company_id': [self.company_id.id, self.company_id.name],
@@ -80,29 +85,42 @@ class InvoicesbyItem(models.TransientModel):
         column = -1
         if self.date_from:
             row += 1
+            column = -1
             worksheet.write(row, column+1, 'From Date', cell_text_format)
             worksheet.write(row, column+2, self.date_from or '',
                             date_heading_format)
-        column+2
 
         if self.date_to:
             row += 1
             worksheet.write(row, column+1, 'To Date', cell_text_format)
             worksheet.write(row, column+2, self.date_to or '',
                             date_heading_format)
-        column+2
+
+        if self.parent_categ_id:
+            row += 1
+            column = -1
+            worksheet.write(
+                row, column+1, 'Product Parent Category', cell_text_format)
+            worksheet.write(row, column+2, self.parent_categ_id.name or '')
+
+        if self.categ_id:
+            row += 1
+            column = -1
+            worksheet.write(row, column+1, 'Product Category',
+                            cell_text_format)
+            worksheet.write(row, column+2, self.categ_id.name or '')
 
         if self.product_id:
             row += 1
+            column = -1
             worksheet.write(row, column+1, 'Product', cell_text_format)
             worksheet.write(row, column+2, self.product_id.name or '')
-        column+2
 
         if self.invoices_bills:
             row += 1
+            column = -1
             worksheet.write(row, column+1, 'Invoices/Bills', cell_text_format)
             worksheet.write(row, column+2, self.invoices_bills or '')
-        column+2
 
         # Sub headers
         row += 2
@@ -122,30 +140,29 @@ class InvoicesbyItem(models.TransientModel):
             worksheet.write(row, column+7, 'Amount', cell_number_format)
 
         # Lines
-        for main in lines(self.date_from, self.date_to, self.company_id.id, self.product_id.id, 'all', self.invoices_bills):
+        for main in lines(self.date_from, self.date_to, self.company_id.id, self.product_id.id, self.parent_categ_id.id, self.categ_id.id, 'all', self.invoices_bills):
             # ------------------------------ Item ------------------------------
 
-            for product in lines(self.date_from, self.date_to, self.company_id.id, self.product_id.id, 'yes', self.invoices_bills):
+            for product in lines(self.date_from, self.date_to, self.company_id.id, self.product_id.id, self.parent_categ_id.id, self.categ_id.id, 'yes', self.invoices_bills):
 
                 if self.report_by == 'Summary':
                     row += 1
                     column = -1
+                    worksheet.write(row, column+1, product['product_name'])
                     worksheet.write(
-                        row, column+1, product['product_name']['en_US'])
+                        row, column+2, "{:,}".format(partner['total_qty']), align_right)
                     worksheet.write(
-                        row, column+2, int(product['total_qty']), align_right)
-                    worksheet.write(
-                        row, column+3, int(product['total_amount']), align_right)
+                        row, column+3, "{:,}".format(partner['total_amount']), align_right)
 
                 if self.report_by == 'Detail':
                     row += 2
                     column = -1
                     row_number = 'A%s:C%s' % (row, row)
                     worksheet.merge_range(
-                        row_number, product['product_name']['en_US'], cell_text_format)
+                        row_number, product['product_name'], cell_text_format)
 
                     # ------------------------------ Lines ------------------------------
-                    for line in lines(self.date_from, self.date_to, self.company_id.id, product['product_id'], 'no', self.invoices_bills):
+                    for line in lines(self.date_from, self.date_to, self.company_id.id, product['product_id'], self.parent_categ_id.id, self.categ_id.id, 'no', self.invoices_bills):
                         row += 1
                         column = -1
 
@@ -155,26 +172,26 @@ class InvoicesbyItem(models.TransientModel):
                         worksheet.write(row, column+3, line['ref'])
                         worksheet.write(row, column+4, line['partner'])
                         worksheet.write(
-                            row, column+5, int(line['quantity']), align_right)
+                            row, column+5, "{:,}".format(line['quantity']), align_right)
                         worksheet.write(
                             row, column+6, line['amount_total']/line['quantity'], align_right)
                         worksheet.write(
-                            row, column+7, int(line['amount_total']), align_right)
+                            row, column+7, "{:,}".format(line['amount_total']), align_right)
 
                         # ---------------------------------------- END LINES ----------------------------------------
 
                     row += 2
                     column = -1
                     worksheet.write(row, column+1, 'TOTAL ' +
-                                    product['product_name']['en_US'], cell_text_format)
+                                    product['product_name'], cell_text_format)
                     worksheet.write(row, column+2, '')
                     worksheet.write(row, column+3, '')
                     worksheet.write(row, column+4, '')
                     worksheet.write(
-                        row, column+5, int(product['total_qty']), align_right_total)
+                        row, column+5, "{:,}".format(product['total_qty']), align_right_total)
                     worksheet.write(row, column+6, '')
                     worksheet.write(
-                        row, column+7, int(product['total_amount']), align_right_total)
+                        row, column+7, "{:,}".format(product['total_amount']), align_right_total)
 
             # Main Totals
             row += 2
@@ -182,9 +199,9 @@ class InvoicesbyItem(models.TransientModel):
             worksheet.write(row, column+1, 'Total', cell_text_format)
 
             worksheet.write(
-                row, column+2, int(main['total_qty_all']), align_right_total)
+                row, column+2, "{:,}".format(main['total_qty_all']), align_right_total)
             worksheet.write(
-                row, column+3, int(main['total_amount_all']), align_right_total)
+                row, column+3, "{:,}".format(main['total_amount_all']), align_right_total)
 
             if self.report_by == 'Detail':
                 worksheet.write(row, column+2, '', cell_text_format)
@@ -192,10 +209,10 @@ class InvoicesbyItem(models.TransientModel):
                 worksheet.write(row, column+4, '', cell_text_format)
 
                 worksheet.write(
-                    row, column+5, int(main['total_qty_all']), align_right_total)
+                    row, column+5, "{:,}".format(main['total_qty_all']), align_right_total)
                 worksheet.write(row, column+6, '', align_right_total)
                 worksheet.write(
-                    row, column+7, int(main['total_amount_all']), align_right_total)
+                    row, column+7, "{:,}".format(main['total_amount_all']), align_right_total)
 
         workbook.close()
         out = base64.encodebytes(fp.getvalue())
@@ -215,7 +232,7 @@ class InvoicesbyItemReport(models.AbstractModel):
     _description = 'Invoices by Item Report'
 
     @api.model
-    def _lines(self, date_from, date_to, company_id, product_id, is_group, invoices_bills):  # , company_branch_ids
+    def _lines(self, date_from, date_to, company_id, product_id, parent_categ_id, categ_id, is_group, invoices_bills):  # , company_branch_ids
         full_move = []
         params = []
         types = """('out_invoice', 'out_refund')"""
@@ -238,7 +255,7 @@ class InvoicesbyItemReport(models.AbstractModel):
             select = """
             select air.invoice_date as date, concat(am.invoice_origin,' - ', am.name) as ref, rp.name as partner,
             am.id as move_id, pp.id as product_id,
-            air.quantity as quantity, air.price_subtotal as amount_total, air.price_average as rate, air.state as state
+            COALESCE(air.quantity, 0) as quantity, COALESCE(air.price_subtotal, 0) as amount_total, air.price_average as rate, air.state as state
             """
 
             order = """
@@ -250,6 +267,8 @@ class InvoicesbyItemReport(models.AbstractModel):
         left join res_partner as rp on air.partner_id=rp.id
         left join product_product as pp on air.product_id=pp.id
         left join product_template as pt on pp.product_tmpl_id=pt.id
+        left join product_category as pc on pt.categ_id = pc.id
+        left join product_category as pc2 on pc.parent_id = pc2.id
         where air.state = 'posted' and air.quantity != 0
         and air.move_type in """ + types
 
@@ -263,6 +282,12 @@ class InvoicesbyItemReport(models.AbstractModel):
 
         if product_id:
             from_where += """ and air.product_id = """ + str(product_id)
+
+        if parent_categ_id:
+            from_where += """ and pc2.id = """ + str(parent_categ_id)
+
+        if categ_id:
+            from_where += """ and pc.id = """ + str(categ_id)
 
         if company_id:
             from_where += """ and air.company_id = """ + str(company_id)
@@ -304,6 +329,8 @@ class InvoicesbyItemReport(models.AbstractModel):
             'date_from': data['form']['date_from'],
             'date_to': data['form']['date_to'],
             'product_id': data['form']['product_id'],
+            'parent_categ_id': data['form']['parent_categ_id'],
+            'categ_id': data['form']['categ_id'],
             'company_id': self.env['res.company'].search([('id', '=', data['form']['company_id'][0])]),
             'report_by': data['form']['report_by'],
             'invoices_bills': data['form']['invoices_bills'],
