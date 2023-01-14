@@ -78,7 +78,7 @@
                                                     <span t-if="invoices_bills == 'Bills'">Vendor</span>
                                                 </t>
                                             </th>
-                                            <th class="text-center" nowrap="nowrap">Quantity</th>
+                                            <th class="text-right" nowrap="nowrap">Quantity</th>
                                             <th class="text-right" nowrap="nowrap"><t t-if="report_by == 'Detail'">Rate</t></th>
                                             <!-- <th class="text-right" nowrap="nowrap">COGS AMT</th> -->
                                             <th class="text-right" nowrap="nowrap">Total</th>
@@ -91,7 +91,7 @@
                                         <t t-foreach="lines(date_from, date_to, company_id.id, product_id[0], parent_categ_id[0], categ_id[0], 'all', invoices_bills)" t-as="main">
                                             <t t-foreach="lines(date_from, date_to, company_id.id, product_id[0], parent_categ_id[0], categ_id[0], 'yes', invoices_bills)" t-as="product">
                                                 <tr t-if="report_by == 'Detail'" style="color: red; font-weight: bold;">
-                                                    <td colspan="7"><span t-esc="product['product_name']['en_US']"/></td>
+                                                    <td colspan="7"><span t-esc="product['product_name']"/></td>
                                                 </tr>
 
 
@@ -101,8 +101,8 @@
                                                         <td nowrap="nowrap"><span t-esc="line['date']"/></td>
                                                         <td><span t-esc="line['ref']"/></td>
                                                         <td  nowrap="nowrap"><span t-esc="line['partner']"/></td>
-                                                        <td class="text-right"><span t-esc="'{0:,.2f}'.format(line['quantity'])"/></td>
-                                                        <td class="text-right">
+                                                        <td style="text-align: right"><span t-esc="'{0:,.2f}'.format(line['quantity'])"/></td>
+                                                        <td style="text-align: right">
                                                             <t t-set="rate" t-value="0"/>
                                                             <t t-set="rate" t-value="line['amount_total']/line['quantity']" t-if="line['quantity'] and line['amount_total']"/>
                                                             <span t-esc="'{0:,.2f}'.format(rate)"/>
@@ -111,7 +111,7 @@
                                                             <t t-set="cogs" t-value="get_cogs(line['move_id'], line['product_id'])"/>
                                                             <span t-esc="'{0:,.2f}'.format(cogs)"/>
                                                         </td> -->
-                                                        <td class="text-right"><span t-esc="'{0:,.2f}'.format(line['amount_total'])" t-if="line['amount_total']"/></td>
+                                                        <td style="text-align: right"><span t-esc="'{0:,.2f}'.format(line['amount_total'])" t-if="line['amount_total']"/></td>
                                                         <!-- <td class="text-right"><span t-esc="'{0:,.2f}'.format(line['amount_total']-cogs)"/></td> -->
                                                     </tr>
                                                 </t>
@@ -120,15 +120,15 @@
                                                     <td colspan="4">
                                                         <span t-esc="product['product_name']" t-if="report_by == 'Summary'"/>
                                                         <span t-if="report_by == 'Detail'" style="color: red; font-weight: bold;">TOTAL </span>
-                                                        <span t-esc="product['product_name']['en_US']" t-if="report_by == 'Detail'" style="color: red; font-weight: bold;"/>
+                                                        <span t-esc="product['product_name']" t-if="report_by == 'Detail'" style="color: red; font-weight: bold;"/>
                                                     </td>
-                                                    <td class="text-right">
+                                                    <td style="text-align: right">
                                                         <span t-if="report_by == 'Detail'" style="color: red; font-weight: bold;" t-esc="'{0:,.2f}'.format(product['total_qty'])"/>
                                                         <span t-if="report_by == 'Summary'" t-esc="'{0:,.2f}'.format(product['total_qty'])"/>
                                                     </td>
 
-                                                    <td class="text-right"></td>
-                                                    <td class="text-right">
+                                                    <td style="text-align: right"></td>
+                                                    <td style="text-align: right">
                                                         <span t-if="report_by == 'Detail'" style="color: red; font-weight: bold;" t-esc="'{0:,.2f}'.format(product['total_amount'])"/>
                                                         <span t-if="report_by == 'Summary'" t-esc="'{0:,.2f}'.format(product['total_amount'])"/>
                                                     </td>
@@ -139,9 +139,9 @@
 
                                             <tr style="font-weight: bold;font-size: 13px">
                                                 <td colspan="4"></td>
-                                                <td class="text-right"><span style="color: red; font-weight: bold;" t-esc="'{0:,.2f}'.format(main['total_qty_all'])"/></td>
-                                                <td class="text-right"></td>
-                                                <td class="text-right"><span style="color: red; font-weight: bold;" t-esc="'{0:,.2f}'.format(main['total_amount_all'])"/></td>
+                                                <td style="text-align: right"><span style="color: red; font-weight: bold;" t-esc="'{0:,.2f}'.format(main['total_qty_all'])"/></td>
+                                                <td style="text-align: right"></td>
+                                                <td style="text-align: right"><span style="color: red; font-weight: bold;" t-esc="'{0:,.2f}'.format(main['total_amount_all'])"/></td>
                                             </tr>
                                         </t>
                                     </tbody>
