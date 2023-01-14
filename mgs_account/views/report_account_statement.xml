@@ -14,7 +14,13 @@
                 <t t-foreach="docs" t-as="doc">
                     <t t-call="web.internal_layout" t-lang="en_US">
                         <div class="page">
-
+                             <style>
+                                th,td {
+                                    padding: 0.30rem;
+                                    border-top: 1px solid #212529;
+                                    border-bottom: 1px solid #212529;
+                                }
+                            </style>
                             <div class="container" style="font-size:12px;font-family:Arial;margin-top:1px;">
                                 <h2>Account Statement</h2>
 
@@ -43,16 +49,15 @@
                             <table class="table table-condensed table-sm">
                                 <thead>
                                     <tr>
-                                        <th style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529;">Account</th>
-                                        <th style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529;"><t t-if="report_by == 'detail'">Date</t></th>
-                                        <th style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529;"><t t-if="report_by == 'detail'">Journal</t></th>
-										<th style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529;"><t t-if="report_by == 'detail'">JV#</t></th>
-                                        <th style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529;"><t t-if="report_by == 'detail'">Partner</t></th>
-                                        <th style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529;"><t t-if="report_by == 'detail'">Analytic Account</t></th>
-                                        <th style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529;"><t t-if="report_by == 'detail'">Label</t></th>
-                                        <th style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529;" class="text-center">Debit</th>
-                                        <th style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529;" class="text-center">Credit</th>
-                                        <th style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529;" class="text-right">Balance</th>
+                                        <th>Account</th>
+                                        <th><t t-if="report_by == 'detail'">Date</t></th>
+                                        <th><t t-if="report_by == 'detail'">JV#</t></th>
+                                        <th><t t-if="report_by == 'detail'">Partner</t></th>
+                                        <!-- <th><t t-if="report_by == 'detail'">Analytic Account</t></th> -->
+                                        <th><t t-if="report_by == 'detail'">Label</t></th>
+                                        <th style="text-align: right">Debit</th>
+                                        <th style="text-align: right">Credit</th>
+                                        <th style="text-align: right">Balance</th>
                                     </tr>
                                 </thead>
 
