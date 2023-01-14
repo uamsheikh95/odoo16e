@@ -127,14 +127,6 @@ class AccountStatement(models.TransientModel):
             worksheet.write(row, column+7, 'Credit', align_right_total)
             worksheet.write(row, column+8, 'Balance', align_right_total)
 
-            if self.env.user.has_group('analytic.group_analytic_accounting'):
-                worksheet.write(
-                    row, column+5, 'Analytic Account', cell_number_format)
-                worksheet.write(row, column+6, 'Label', cell_number_format)
-                worksheet.write(row, column+7, 'Debit', align_right_total)
-                worksheet.write(row, column+8, 'Credit', align_right_total)
-                worksheet.write(row, column+9, 'Balance', align_right_total)
-
         # ------------------------------ Account ------------------------------
         total_debit_all = 0
         total_credit_all = 0
@@ -205,11 +197,11 @@ class AccountStatement(models.TransientModel):
         column = -1
         worksheet.write(row, column+1, '')
         worksheet.write(
-            row, column+7, int(total_debit_all), align_right_total)
+            row, column+6, int(total_debit_all), align_right_total)
         worksheet.write(
-            row, column+8, int(total_credit_all), align_right_total)
+            row, column+7, int(total_credit_all), align_right_total)
         worksheet.write(
-            row, column+9, int(total_debit_all-total_credit_all), align_right_total)
+            row, column+8, int(total_debit_all-total_credit_all), align_right_total)
 
         workbook.close()
         out = base64.encodebytes(fp.getvalue())
