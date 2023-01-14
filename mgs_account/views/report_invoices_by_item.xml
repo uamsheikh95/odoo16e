@@ -78,10 +78,10 @@
                                                     <span t-if="invoices_bills == 'Bills'">Vendor</span>
                                                 </t>
                                             </th>
-                                            <th class="text-right" nowrap="nowrap">Quantity</th>
-                                            <th class="text-right" nowrap="nowrap"><t t-if="report_by == 'Detail'">Rate</t></th>
-                                            <!-- <th class="text-right" nowrap="nowrap">COGS AMT</th> -->
-                                            <th class="text-right" nowrap="nowrap">Total</th>
+                                            <th style="text-align: right" nowrap="nowrap">Quantity</th>
+                                            <th style="text-align: right" nowrap="nowrap"><t t-if="report_by == 'Detail'">Rate</t></th>
+                                            <!-- <th style="text-align: right" nowrap="nowrap">COGS AMT</th> -->
+                                            <th style="text-align: right" nowrap="nowrap">Total</th>
                                             <!-- <th class="text-right" nowrap="nowrap">Total Margin</th> -->
                                         </tr>
                                     </thead>
