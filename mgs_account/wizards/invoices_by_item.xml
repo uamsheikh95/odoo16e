@@ -10,20 +10,22 @@
 							<group>
 								<field name="date_from" string = "From"/>
 								<field name="product_id" options="{'no_create': True}" />
-                                <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}" />
+								<field name="company_id" groups="base.group_multi_company" options="{'no_create': True}" />
+								<field name="report_by" widget="radio"/>
 							</group>
 
 
 							<group>
 								<field name="date_to" string="To"/>
+								<field name="parent_categ_id" options="{'no_create': True}" />
+								<field name="categ_id" options="{'no_create': True}" />
 								<field name="invoices_bills" required="1"/>
-								<field name="report_by" widget="radio"/>
 							</group>
 						</group>
 					</sheet>
 
 				<footer>
-					<button name="confirm" string="View" type="object" class="oe_highlight"/>
+					<button name="confirm" string="PDF" type="object" class="oe_highlight"/>
 					<button name="export_to_excel" string="EXCEL" type="object" class="oe_highlight"/>
 					<button string="Cancel" special="cancel"/>
 				</footer>
