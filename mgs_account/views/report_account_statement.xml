@@ -133,13 +133,13 @@
                                         <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529" colspan="5">
                                             <span style="color: blue; font-weight: bold;" t-if="report_by == 'detail'">TOTAL </span>
                                         </td>
-                                        <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529" class="text-right">
+                                        <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529;text-align: right">
                                             <span style="color: blue; font-weight: bold;" t-esc="'{0:,.2f}'.format(total_debit_all)"/>
                                         </td>
-                                        <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529" class="text-right">
+                                        <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529;text-align: right">
                                             <span style="color: blue; font-weight: bold;" t-esc="'{0:,.2f}'.format(total_credit_all)"/>
                                         </td>
-                                        <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529" class="text-right">
+                                        <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529;text-align: right">
                                             <span style="color: blue; font-weight: bold;" t-esc="'{0:,.2f}'.format(total_debit_all-total_credit_all)"/>
                                         </td>
                                     </tr>
