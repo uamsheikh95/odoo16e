@@ -127,10 +127,10 @@
                                             <t t-set="total_debit_all" t-value="total_debit_all+account['total_debit']"/>
                                             <t t-set="total_credit_all" t-value="total_credit_all+account['total_credit']"/>
                                         </tr>
-                                        <tr t-if="report_by == 'detail'"><td colspan="9" style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529;height: 19px"/></tr>
+                                        <tr t-if="report_by == 'detail'"><td colspan="8" style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529;height: 19px"/></tr>
                                     </t>
                                     <tr style="font-weight: bold">
-                                        <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529" colspan="7">
+                                        <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529" colspan="5">
                                             <span style="color: blue; font-weight: bold;" t-if="report_by == 'detail'">TOTAL </span>
                                         </td>
                                         <td style="padding: 0.30rem;border-top: 1px solid #212529;border-bottom: 1px solid #212529" class="text-right">
