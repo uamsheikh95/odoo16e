@@ -139,7 +139,7 @@ class AccountStatement(models.TransientModel):
         total_debit_all = 0
         total_credit_all = 0
 
-        for account in lines(self.company_id.id, self.date_from, self.date_to, self.account_id.id, self.partner_id.id, self.analytic_account_id.id, self.target_moves, 'yes'):
+        for account in lines(self.company_id.id, self.date_from, self.date_to, self.account_id.ids, self.partner_id.id, self.analytic_account_id.id, self.target_moves, 'yes'):
             # Inital Balance
             initial_balance = 0 if not self.date_from else sum_open_balance(
                 self.company_id.id, self.date_from, account['account_id'], self.analytic_account_id.id, self.partner_id.id, self.target_moves)
