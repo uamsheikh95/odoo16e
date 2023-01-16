@@ -1,0 +1,93 @@
+<odoo>
+  <record model="ir.ui.view" id="customer_tree">
+      <field name="name">mgs_slnia.customer.tree</field>
+      <field name="model">mgs_slnia.customer</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="mobile"/>
+          <field name="email"/>
+          <field name="id_no"/>
+          <field name="related_insurance_id"/>
+        </tree>
+      </field>
+    </record>
+
+  <record model="ir.ui.view" id="customer_form">
+    <field name="name">mgs_slnia.customer.form</field>
+    <field name="model">mgs_slnia.customer</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <div class="oe_title"
+            <h1><field name="name"/></h1>
+          </div>
+          <group>
+            <group>
+              <label for="street" string="Address"/>
+              <div class="address_format" style="position:relative">
+                  <field name="street" placeholder="Address 1" />
+                  <field name="street2" placeholder="Address 2" />
+                  <field name="city" style="width: 30%" placeholder="City">
+                  <field name="state_id" style="width: 30%" placeholder="State" options="{'no_open': True, 'no_quick_create': True}"/>
+                  <field name="country_id" placeholder="Country" style="width: 31%">
+              </div>
+              <field name="related_insurance_id" options="{'no_create': True}"/>
+            </group>
+
+            <group>
+              <field name="mobile"/>
+              <field name="email"/>
+              <field name="id_no"/>
+              <field name="company_id" groups="base.group_multi_company"/>
+            </group>
+          </group>
+        </sheet>
+        <div class="oe_chatter">
+          <field name="message_follower_ids" widget="mail_followers"/>
+          <field name="message_ids" widget="mail_thread"/>
+        </div>
+      </form>
+    </field>
+  </record>
+
+  <record model="ir.ui.view" id="customer_search">
+    <field name="name">mgs_slnia.customer.search</field>
+    <field name="model">mgs_slnia.customer</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="name" string="Customer Name"/>
+        <field name="mobile"/>
+        <field name="email"/>
+        <field name="id_no"/>
+        <group expand="0" string="Group By..." colspan="12" col="10">
+          <filter string="Country" name="country_id" context="{'group_by': 'country_id'}"></filter>
+          <filter string="Insurance Organization" name="related_insurance_id" context="{'group_by': 'related_insurance_id'}"></filter>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <record model="ir.actions.act_window" id="customer_action">
+    <field name="name">Customers</field>
+    <field name="res_model">mgs_slnia.customer</field>
+    <field name="view_mode">tree,form</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+          Create the first customer
+        </p>
+    </field>
+  </record>
+
+  <record model="ir.actions.act_window" id="insurance_action">
+    <field name="name">Insurance Organizations</field>
+    <field name="res_model">res.partner</field>
+    <field name="view_mode">tree,form</field>
+    <field name="domain">[('is_insurence_company','=', True)]</field>
+    <field name="context">{'default_is_insurence_company': 1}</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">Create the first insurance organization
+        </p>
+    </field>
+  </record>
+</odoo>
