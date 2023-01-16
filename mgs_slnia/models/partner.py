@@ -12,6 +12,9 @@ class Partner(models.Model):
 
 class SLNIACustomer(models.Model):
     _name = 'mgs_slnia.customer'
+    _description = 'Customers'
+    _inherit = ['mail.thread']
+    _order = 'id desc'
 
     name = fields.Char('Name', required=True)
     mobile = fields.Char(string="Mobile", required=True)
