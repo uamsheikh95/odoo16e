@@ -24,6 +24,7 @@
     'data': [
         'security/ir.model.access.csv',
         'views/config.xml',
+        'views/partner.xml',
         'views/mgs_slnia_menu.xml',
     ],
     # only loaded in demonstration mode

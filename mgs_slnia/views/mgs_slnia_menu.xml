@@ -4,7 +4,31 @@
     web_icon="mgs_slnia,static/description/icon.png"
     
   />
-  <!-- groups="urbiz_tms.group_urbiz_tms_location_user_restricted" -->
+
+  <!-- Partner -->
+  <menuitem
+    id="mgs_slnia_partner"
+    name="Partners"
+    parent="mgs_slnia_root"
+    sequence="20"
+  />
+
+  <menuitem
+    id="mgs_slnia_partner_insurance"
+    name="Insurance Organizations"
+    parent="mgs_slnia_partner"
+    action="insurance_action"
+    sequence="1"
+  />
+
+  <menuitem
+    id="mgs_slnia_partner_customer"
+    name="Customers"
+    parent="mgs_slnia_partner"
+    action="customer_action"
+    sequence="5"
+  />
+
 
   <!-- Configuration -->
     <menuitem
