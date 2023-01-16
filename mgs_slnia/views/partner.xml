@@ -30,7 +30,7 @@
                   <field name="street2" placeholder="Address 2" />
                   <field name="city" style="width: 30%" placeholder="City">
                   <field name="state_id" style="width: 30%" placeholder="State" options="{'no_open': True, 'no_quick_create': True}"/>
-                  <field name="country_id" placeholder="Country" style="width: 31%">
+                  <field name="country_id" placeholder="Country" style="width: 31%"/>
               </div>
               <field name="related_insurance_id" options="{'no_create': True}"/>
             </group>
