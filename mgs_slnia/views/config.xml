@@ -1,0 +1,73 @@
+<odoo>
+  <!-- POLICY TYPE -->
+  <record model="ir.ui.view" id="policy_type_tree">
+    <field name="name">mgs_slnia.policy_type.tree</field>
+    <field name="model">mgs_slnia.policy_type</field>
+    <field name="arch" type="xml">
+      <tree>
+        <field name="name"/>
+      </tree>
+    </field>
+  </record>
+
+  <record model="ir.ui.view" id="policy_type_form">
+    <field name="name">mgs_slnia.policy_type.form</field>
+    <field name="model">mgs_slnia.policy_type</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <group>
+            <field name="name"/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record model="ir.actions.act_window" id="policy_type_action">
+    <field name="name">Policy Types</field>
+    <field name="res_model">mgs_slnia.policy_type</field>
+    <field name="view_mode">tree,form</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+          Create the first poilcy type
+        </p>
+    </field>
+  </record>
+
+  <!-- PERIOD -->
+  <record model="ir.ui.view" id="period_tree">
+    <field name="name">mgs_slnia.period.tree</field>
+    <field name="model">mgs_slnia.period</field>
+    <field name="arch" type="xml">
+      <tree>
+        <field name="name"/>
+      </tree>
+    </field>
+  </record>
+
+  <record model="ir.ui.view" id="period_form">
+    <field name="name">mgs_slnia.period.form</field>
+    <field name="model">mgs_slnia.period</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <group>
+            <field name="name"/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record model="ir.actions.act_window" id="period_action">
+    <field name="name">Periods</field>
+    <field name="res_model">mgs_slnia.period</field>
+    <field name="view_mode">tree,form</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+          Create the first period
+        </p>
+    </field>
+  </record>
+</odoo>
