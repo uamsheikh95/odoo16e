@@ -10,7 +10,7 @@ class PolicyRegisteration(models.Model):
     _order = 'id desc'
 
     name = fields.Char(string='Reg#', copy=False)
-    api_id = fields.Intger(string='API ID')
+    api_id = fields.Integer(string='API ID')
     related_insurance_id = fields.Many2one('res.partner', domain=[(
         'is_insurence_company', '=', True)], auto_join=True, index=True, required=True, string='Related Insurance Org', help='Related Insurance Organization')
     period_id = fields.Many2one(
