@@ -62,4 +62,15 @@
       </search>
     </field>
   </record>
+
+  <record model="ir.actions.act_window" id="policy_registeration_action">
+    <field name="name">Policy Registerations</field>
+    <field name="res_model">mgs_slnia.policy_registeration</field>
+    <field name="view_mode">tree,form</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+          Create the first policy
+        </p>
+    </field>
+  </record>
 </odoo>
