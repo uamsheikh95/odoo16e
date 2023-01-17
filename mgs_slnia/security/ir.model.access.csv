@@ -2,3 +2,4 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_mgs_slnia_policy_type,mgs_slnia.policy_type,model_mgs_slnia_policy_type,base.group_user,1,1,1,1
 access_mgs_slnia_period,mgs_slnia.period,model_mgs_slnia_period,base.group_user,1,1,1,1
 access_mgs_slnia_customer,mgs_slnia.customer,model_mgs_slnia_customer,base.group_user,1,1,1,1
+access_mgs_slnia_policy_registeration,mgs_slnia.policy_registeration,model_mgs_slnia_policy_registeration,base.group_user,1,1,1,1

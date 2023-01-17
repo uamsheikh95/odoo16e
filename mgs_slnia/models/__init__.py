@@ -2,3 +2,4 @@
 
 from . import config
 from . import partner
+from . import registeration
