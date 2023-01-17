@@ -69,7 +69,7 @@
         <field name="related_insurance_id"/>
         <field name="customer_id"/>
         <group expand="0" string="Group By..." colspan="12" col="10">
-          <filter string="Customer" name="country_id" context="{'group_by': 'country_id'}"></filter>
+          <filter string="Customer" name="customer_id" context="{'group_by': 'customer_id'}"></filter>
           <filter string="Insurance Organization" name="related_insurance_id" context="{'group_by': 'related_insurance_id'}"></filter>
         </group>
       </search>
