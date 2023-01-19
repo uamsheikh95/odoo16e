@@ -1,0 +1,86 @@
+<odoo>
+
+
+
+
+        <record id="res_config_settings_view_form" model="ir.ui.view">
+            <field name="name">res.config.settings.view.form.inherit.hr.fleet.addons</field>
+            <field name="model">res.config.settings</field>
+            <field name="priority" eval="90"/>
+            <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@id='end_contract_setting']" position="after">
+                    <!-- <div class="app_settings_block" groups="fleet.fleet_group_manager"> -->
+                        <div class="row mt16 o_settings_container" id="feul_service">
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_left_pane"/>
+                                <div class="o_setting_right_pane">
+                                      <span class="o_form_label">Feul Service</span>
+                                        <field name="fuel_service_id" class="text-center oe_inline" />
+                                </div>
+                            </div>
+                        </div>
+                    <!-- </div> -->
+                </xpath>
+            </field>
+        </record>
+
+  <data>
+    <!-- explicit list view definition -->
+    <!--
+    <record model="ir.ui.view" id="mgs_fleet_addons.list">
+      <field name="name">mgs_fleet_addons list</field>
+      <field name="model">mgs_fleet_addons.mgs_fleet_addons</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+    -->
+
+    <!-- actions opening views on models -->
+    <!--
+    <record model="ir.actions.act_window" id="mgs_fleet_addons.action_window">
+      <field name="name">mgs_fleet_addons window</field>
+      <field name="res_model">mgs_fleet_addons.mgs_fleet_addons</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    -->
+
+    <!-- server action to the one above -->
+    <!--
+    <record model="ir.actions.server" id="mgs_fleet_addons.action_server">
+      <field name="name">mgs_fleet_addons server</field>
+      <field name="model_id" ref="model_fleet_addons_fleet_addons"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": self._name,
+        }
+      </field>
+    </record>
+    -->
+
+    <!-- Top menu item -->
+    <!--
+    <menuitem name="mgs_fleet_addons" id="mgs_fleet_addons.menu_root"/>
+    -->
+    <!-- menu categories -->
+    <!--
+    <menuitem name="Menu 1" id="mgs_fleet_addons.menu_1" parent="mgs_fleet_addons.menu_root"/>
+    <menuitem name="Menu 2" id="mgs_fleet_addons.menu_2" parent="mgs_fleet_addons.menu_root"/>
+    -->
+    <!-- actions -->
+    <!--
+    <menuitem name="List" id="mgs_fleet_addons.menu_1_list" parent="mgs_fleet_addons.menu_1"
+              action="mgs_fleet_addons.action_window"/>
+    <menuitem name="Server to list" id="mgs_fleet_addons" parent="mgs_fleet_addons.menu_2"
+              action="mgs_fleet_addons.action_server"/>
+    -->
+  </data>
+</odoo>
