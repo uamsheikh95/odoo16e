@@ -71,11 +71,10 @@
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='partner_id']" position="replace">
-                 <label for="partner_id"/>
-                <div class="address_format" style="position:relative">
-                    <field name="partner_id" style="width: 75%" widget="res_partner_many2one" 
-                        context="{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True}" options="{&quot;always_reload&quot;: True, 'no_create': True}"/>
-                    <field name="partner_balance" style="position: absolute; right: 0;"/>
+                <div class="d-flex">
+                    <field name="partner_id" widget="res_partner_many2one" context="{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True}" options="{&quot;always_reload&quot;: True}"/>
+                    <span class="o_form_label mx-3 oe_edit_only"> Bal </span>
+                    <field name="partner_balance"/>
                 </div>
             </xpath>
         </field>
